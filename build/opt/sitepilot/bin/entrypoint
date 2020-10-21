@@ -1,0 +1,28 @@
+#!/bin/bash
+
+set -a
+set -e
+set -o pipefail
+
+if [ ! "$(ls -A $APP_ROOT)" ] && [ ! -z $DEPLOY_REPOSITORY ]; then
+    git clone $DEPLOY_REPOSITORY $APP_ROOT/
+    if [ -d .sitepilot/deploy ] ; then
+        run-parts --exit-on-error .sitepilot/deploy
+    fi
+fi
+
+if [ -f $SITEPILOT_ROOT/environment ] ; then
+    source $SITEPILOT_ROOT/environment
+fi
+
+dockerize -template /opt/sitepilot/templates:/opt/sitepilot/etc
+
+if [ -f /opt/sitepilot/etc/msmtp.conf ] ; then
+    chmod 0600 /opt/sitepilot/etc/msmtp.conf
+fi
+
+if [ -d /opt/sitepilot/bin/entrypoint.d ] ; then
+    run-parts --exit-on-error /opt/sitepilot/bin/entrypoint.d
+fi
+
+exec "$@"

@@ -1,0 +1,77 @@
+[{
+        "id": "github-webhook",
+        "execute-command": "/opt/sitepilot/bin/deploy",
+        "command-working-directory": "{{ .Env.APP_ROOT }}",
+        "pass-arguments-to-command": [{
+                "source": "payload",
+                "name": "head_commit.id"
+            },
+            {
+                "source": "payload",
+                "name": "pusher.name"
+            },
+            {
+                "source": "payload",
+                "name": "pusher.email"
+            }
+        ],
+        "trigger-rule": {
+            "and": [{
+                    "match": {
+                        "type": "payload-hash-sha1",
+                        "secret": "{{ .Env.DEPLOY_TOKEN }}",
+                        "parameter": {
+                            "source": "header",
+                            "name": "X-Hub-Signature"
+                        }
+                    }
+                },
+                {
+                    "match": {
+                        "type": "value",
+                        "value": "refs/heads/master",
+                        "parameter": {
+                            "source": "payload",
+                            "name": "ref"
+                        }
+                    }
+                }
+            ]
+        }
+    },
+    {
+        "id": "bitbucket-webhook",
+        "execute-command": "/opt/sitepilot/bin/deploy",
+        "command-working-directory": "{{ .Env.APP_ROOT }}",
+        "pass-arguments-to-command": [{
+            "source": "payload",
+            "name": "actor.username"
+        }],
+        "trigger-rule": {
+            "match": {
+                "type": "{{ .Env.DEPLOY_TOKEN }}",
+                "ip-range": "104.192.143.0/24"
+            }
+        }
+    },
+    {
+        "id": "gitlab-webhook",
+        "execute-command": "/opt/sitepilot/bin/deploy",
+        "command-working-directory": "{{ .Env.APP_ROOT }}",
+        "pass-arguments-to-command": [{
+            "source": "payload",
+            "name": "user_name"
+        }],
+        "response-message": "Executing redeploy script",
+        "trigger-rule": {
+            "match": {
+                "type": "value",
+                "value": "{{ .Env.DEPLOY_TOKEN }}",
+                "parameter": {
+                    "source": "header",
+                    "name": "X-Gitlab-Token"
+                }
+            }
+        }
+    }
+]
