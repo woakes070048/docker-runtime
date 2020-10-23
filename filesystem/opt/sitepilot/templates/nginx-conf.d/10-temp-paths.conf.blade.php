@@ -1,3 +1,5 @@
+# vim: set ft=nginx:
+
 fastcgi_temp_path /tmp/fastcgi_temp;
 proxy_temp_path /tmp/proxy_temp;
 uwsgi_temp_path /tmp/uwsgi_temp;

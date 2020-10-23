@@ -4,23 +4,14 @@ set -a
 set -e
 set -o pipefail
 
-if [ -f $SITEPILOT_ROOT/environment ] ; then
-    source $SITEPILOT_ROOT/environment
-fi
+mkdir -p $APP_PATH/deploy
+deployPath=$APP_PATH/deploy/$(date +%s)
 
-if [ -d .git ] ; then
-    git pull origin master
-fi
+git clone --single-branch --branch $DEPLOY_BRANCH $DEPLOY_REPOSITORY $deployPath
 
-if [ -d .sitepilot/deploy ] ; then
-    run-parts --exit-on-error .sitepilot/deploy
-fi
+runtime config:generate /opt/sitepilot/templates /opt/sitepilot/etc --configFile=/opt/sitepilot/runtime.yml --mergeFile=$deployPath/.sitepilot/runtime.yml
 
-dockerize -template /opt/sitepilot/templates:/opt/sitepilot/etc
+chmod +x /opt/sitepilot/etc/deploy.sh
 
-if [ -d $SITEPILOT_ROOT/templates ] ; then
-    dockerize -template $SITEPILOT_ROOT/templates:$DOCUMENT_ROOT
-fi
+/opt/sitepilot/etc/deploy.sh $deployPath $1
 
-supervisorctl --username sitepilot --password secret restart web:php-fpm
-supervisorctl --username sitepilot --password secret restart web:nginx

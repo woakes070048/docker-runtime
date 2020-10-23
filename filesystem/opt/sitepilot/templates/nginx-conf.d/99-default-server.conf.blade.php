@@ -3,11 +3,10 @@
 server {
     listen       8080;
     server_name  $hostname;
-    root         {{ .Env.DOCUMENT_ROOT }};
+    root         {{ env('APP_PATH_PUBLIC') }}/{{ $nginx['root'] }};
     index        index.html index.htm index.php;
 
-    set $app_root {{ .Env.APP_ROOT }};
-    set $sitepilot_root {{ .Env.SITEPILOT_ROOT }};
+    set $app_root {{ env('APP_PATH') }};
 
     include /opt/sitepilot/etc/nginx-vhost-conf.d/*.conf;
 }

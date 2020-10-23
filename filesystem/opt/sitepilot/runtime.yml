@@ -1,0 +1,62 @@
+---
+version: "1.0"
+
+nginx:
+  root: null
+  errorLog: "/dev/stderr"
+  errorLogLevel: "warn"
+  accessLog: "off"
+  realIpFrom:
+    - "10.0.0.0/8"
+  realIpHeader: "X-Forwarded-For"
+  realIpRecursive: "on"
+  blockPHPPaths: false
+  readTimeout: 30
+  allowedPHPPaths:
+    - " ~^/index.php"
+    - "~^/wp-admin/"
+    - "~^/wp-includes/"
+    - "~^/xmlrpc.php"
+    - "~^/wp-login.php"
+    - "~^/wp-register.php"
+    - "~^/wp-comments-post.php"
+    - "~^/wp-cron.php"
+    - "~^/wp-load.php"
+  vhost:
+    maxBodySize: "32"
+
+php:
+  limitExtensions:
+    - ".php"
+  clearEnv: "no"
+  accessLog: "off"
+  accessLogFormat: '%R - %u %t "%m %r" %s [%n]'
+  slowLogTimeout: 0
+  requestTimeout: 30
+  memoryLimit: 128
+  uploadSize: 32
+  maxChildren: 5
+
+cache:
+  enabled: false
+  debug: false
+  backend: "redis"
+  host: "redis"
+  port: "6379"
+
+smtp:
+  user: ""
+  password: ""
+  host: "localhost"
+  port: "587"
+  tls: "on"
+  tlsStarttls: "on"
+
+deploy:
+  path: "release"
+  hooks:
+    postCloneScript: |
+      echo "Running default post clone script." 
+    postActivateScript: |
+      echo "Running default post activate script."
+  linkedFolders: []

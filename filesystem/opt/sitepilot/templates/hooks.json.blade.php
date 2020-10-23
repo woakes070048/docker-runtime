@@ -1,7 +1,7 @@
 [{
-        "id": "github-webhook",
+        "id": "github",
         "execute-command": "/opt/sitepilot/bin/deploy",
-        "command-working-directory": "{{ .Env.APP_ROOT }}",
+        "command-working-directory": "{{ env('APP_PATH') }}",
         "pass-arguments-to-command": [{
                 "source": "payload",
                 "name": "head_commit.id"
@@ -19,7 +19,7 @@
             "and": [{
                     "match": {
                         "type": "payload-hash-sha1",
-                        "secret": "{{ .Env.DEPLOY_TOKEN }}",
+                        "secret": "{{ env('DEPLOY_TOKEN', uniqid()) }}",
                         "parameter": {
                             "source": "header",
                             "name": "X-Hub-Signature"
@@ -29,7 +29,7 @@
                 {
                     "match": {
                         "type": "value",
-                        "value": "refs/heads/master",
+                        "value": "refs/heads/{{ env('DEPLOY_BRANCH') }}",
                         "parameter": {
                             "source": "payload",
                             "name": "ref"
@@ -40,24 +40,24 @@
         }
     },
     {
-        "id": "bitbucket-webhook",
+        "id": "bitbucket",
         "execute-command": "/opt/sitepilot/bin/deploy",
-        "command-working-directory": "{{ .Env.APP_ROOT }}",
+        "command-working-directory": "{{ env('APP_PATH') }}",
         "pass-arguments-to-command": [{
             "source": "payload",
             "name": "actor.username"
         }],
         "trigger-rule": {
             "match": {
-                "type": "{{ .Env.DEPLOY_TOKEN }}",
+                "type": "{{ env('DEPLOY_TOKEN', uniqid()) }}",
                 "ip-range": "104.192.143.0/24"
             }
         }
     },
     {
-        "id": "gitlab-webhook",
+        "id": "gitlab",
         "execute-command": "/opt/sitepilot/bin/deploy",
-        "command-working-directory": "{{ .Env.APP_ROOT }}",
+        "command-working-directory": "{{ env('APP_PATH') }}",
         "pass-arguments-to-command": [{
             "source": "payload",
             "name": "user_name"
@@ -66,7 +66,7 @@
         "trigger-rule": {
             "match": {
                 "type": "value",
-                "value": "{{ .Env.DEPLOY_TOKEN }}",
+                "value": "{{ env('DEPLOY_TOKEN', uniqid()) }}",
                 "parameter": {
                     "source": "header",
                     "name": "X-Gitlab-Token"

@@ -4,18 +4,11 @@ set -a
 set -e
 set -o pipefail
 
-if [ ! "$(ls -A $APP_ROOT)" ] && [ ! -z $DEPLOY_REPOSITORY ]; then
-    git clone $DEPLOY_REPOSITORY $APP_ROOT/
-    if [ -d .sitepilot/deploy ] ; then
-        run-parts --exit-on-error .sitepilot/deploy
-    fi
+if [ ! -z $DEPLOY_REPOSITORY ] && [ ! -z $DEPLOY_BRANCH ]; then
+    deploy --skip-reload
+else 
+    runtime config:generate /opt/sitepilot/templates /opt/sitepilot/etc --configFile=/opt/sitepilot/runtime.yml --mergeFile=$APP_PATH_PUBLIC/.sitepilot/runtime.yml
 fi
-
-if [ -f $SITEPILOT_ROOT/environment ] ; then
-    source $SITEPILOT_ROOT/environment
-fi
-
-dockerize -template /opt/sitepilot/templates:/opt/sitepilot/etc
 
 if [ -f /opt/sitepilot/etc/msmtp.conf ] ; then
     chmod 0600 /opt/sitepilot/etc/msmtp.conf

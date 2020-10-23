@@ -1,8 +1,6 @@
 # vim: set ft=nginx:
-{{- $pageCacheEnabled := default "false" .Env.RUNTIME_CACHE_ENABLED }}
-{{- $pageCacheDebug := default "false" .Env.RUNTIME_CACHE_DEBUG }}
+@if($cache['enabled'])
 
-{{- if isTrue $pageCacheEnabled }}
 set $skip 0;
 
 if ($request_method = POST) {
@@ -38,7 +36,8 @@ srcache_store PUT /.stack-cache-store key=$escaped_key;
 
 more_set_headers "X-Cache $srcache_fetch_status";
 
-{{- if isTrue $pageCacheDebug }}
+@if($cache['debug'])
 more_set_headers "X-Cache-Key $key";
-{{- end }}
-{{- end }}
+@endif
+@endif
+

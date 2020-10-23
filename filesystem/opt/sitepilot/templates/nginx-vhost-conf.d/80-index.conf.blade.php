@@ -1,8 +1,5 @@
 # vim: set ft=nginx:
 
-{{- $pageCacheEnabled := default "false" .Env.RUNTIME_CACHE_ENABLED }}
-{{- $blockPhpPaths := default "false" .Env.RUNTIME_BLOCK_NON_WP_PATHS }}
-
 add_header X-Powered-By "Sitepilot";
 
 location / {
@@ -10,18 +7,18 @@ location / {
 }
 
 location ~ \.php$ {
-    {{- if isTrue $pageCacheEnabled }}
+    @if($cache['enabled'])
     include              /opt/sitepilot/etc/nginx-vhost-conf.d/page-cache.d/*.conf;
-    {{- end }}
+    @endif
 
-    {{- if isTrue $blockPhpPaths }}
+    @if($nginx['blockPHPPaths'])
     if ( $is_allowed_php_uri ~* "^(|no|false|0)$" ) {
         return 403;
     }
-    {{- end }}
+    @endif
 
     fastcgi_pass         $upstream;
-    fastcgi_read_timeout {{ max 60 (add 10 (default "30" .Env.PHP_REQUEST_TIMEOUT | atoi)) }};
+    fastcgi_read_timeout {{ $nginx['readTimeout'] }};
     fastcgi_index        index.php;
     include              /usr/local/openresty/nginx/conf/fastcgi.conf;
 }

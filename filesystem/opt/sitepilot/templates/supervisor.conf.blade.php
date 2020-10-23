@@ -14,11 +14,11 @@ password = secret
 supervisor.rpcinterface_factory = supervisor.rpcinterface:make_main_rpcinterface
 
 [program:nginx]
-{{- if eq "debug" (default "warn" .Env.NGINX_ERROR_LOG_LEVEL) }}
+@if($nginx['errorLogLevel'] == 'debug')
 command = /usr/bin/openresty-debug -p /var/lib/nginx -g 'daemon off;' -c /opt/sitepilot/etc/nginx.conf
-{{- else }}
+@else
 command = /usr/bin/openresty -p /var/lib/nginx -g 'daemon off;' -c /opt/sitepilot/etc/nginx.conf
-{{- end }}
+@endif
 process_name = nginx
 autorestart=true
 stopasgroup=true
@@ -28,7 +28,7 @@ stderr_logfile = /dev/stderr
 stderr_logfile_maxbytes=0
 
 [program:php-fpm]
-command = php-fpm{{ default "7.4" .Env.PHP_VERSION }} -y /opt/sitepilot/etc/php-fpm.conf
+command = php-fpm{{ env('PHP_VERSION', '7.4') }} -y /opt/sitepilot/etc/php-fpm.conf
 autorestart=true
 stopasgroup=true
 stdout_logfile = /dev/stdout
@@ -37,7 +37,7 @@ stderr_logfile = /dev/stderr
 stderr_logfile_maxbytes=0
 
 [program:webhook]
-command = webhook -hooks /opt/sitepilot/etc/hooks.json -verbose
+command = webhook -urlprefix -/webhooks -hooks /opt/sitepilot/etc/hooks.json -verbose
 utorestart=true
 stopasgroup=true
 stdout_logfile = /dev/stdout
@@ -47,6 +47,10 @@ stderr_logfile_maxbytes=0
 
 [group:web]
 programs=nginx,php-fpm
+
+[eventlistener:processes]
+command=emergency-exit
+events=PROCESS_STATE_STOPPED, PROCESS_STATE_EXITED, PROCESS_STATE_FATAL
 
 [include]
 files=/opt/sitepilot/etc/supervisor.d/*.conf
