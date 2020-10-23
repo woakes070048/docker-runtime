@@ -11,15 +11,23 @@ Docker runtime image used for running applications on the Sitepilot managed host
 |`DEPLOY_BRANCH`|`main`|The branch which needs to be cloned|
 |`DEPLOY_REPOSITORY`|`none`|The repository which will be cloned on container startup or incoming webhook|
 
+## Volumes
+
+To persist your data you need to mount `/opt/sitepilot/app/public` to a Docker volume or local folder.
+
+## Ports
+
+The Nginx webserver is listening to port `8080`.
+
 ## Configuration 
 
-You can override the runtime configuration by creating / mounting a runtime configuration file to `public/.sitepilot/runtime.yml` or by adding the file to the root of the deployed repository `<repository-root>/.sitepilot/runtime.yml`. The application runtime file wil be merged with the default configuration. 
+You can override the runtime configuration by creating / mounting a runtime configuration file to `public/.sitepilot/runtime.yml` or by adding the file to the root of the deployed repository `<repository-root>/.sitepilot/runtime.yml`. The application runtime file wil be merged with the default configuration.
 
-[You can use the default runtime configuration file as a refference.](filesystem/opt/sitepilot/runtime.yml)
+[You can use the default runtime configuration file for reference.](filesystem/opt/sitepilot/runtime.yml)
 
 ## Auto Deployment
 
-To automatically deploy your application after a push to GitHub, GitLab or BitBucket you need to configure a webhook. You can point your webhook to the following URL:
+To automatically deploy your application after each push to GitHub, GitLab or BitBucket you need to configure a webhook. You can point your webhook to the following URL:
 
 ```
 # GitHub
