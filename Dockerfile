@@ -45,6 +45,13 @@ RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" \
     && php -r "unlink('composer-setup.php');" \
     && composer --version
 
+# ----- WPCLI ----- #
+
+RUN curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar \
+    && chmod +x wp-cli.phar \
+    && mv wp-cli.phar /usr/local/bin/wp \
+    && wp --allow-root --version
+
 # ----- Runtime ----- #
 
 RUN wget https://github.com/sitepilot/runtime/releases/latest/download/runtime -O /opt/sitepilot/bin/runtime \
