@@ -13,7 +13,7 @@ nginx:
   blockPHPPaths: false
   readTimeout: 30
   allowedPHPPaths:
-    - " ~^/index.php"
+    - "~^/index.php"
     - "~^/wp-admin/"
     - "~^/wp-includes/"
     - "~^/xmlrpc.php"
@@ -56,7 +56,7 @@ deploy:
   path: "release"
   hooks:
     postCloneScript: |
-      echo "Running default post clone script." 
+      echo "Running default post clone script."
     postActivateScript: |
       echo "Running default post activate script."
   linkedFolders: []
