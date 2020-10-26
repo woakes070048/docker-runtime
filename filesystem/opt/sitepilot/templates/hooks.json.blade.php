@@ -1,7 +1,7 @@
 [{
         "id": "github",
         "execute-command": "/opt/sitepilot/bin/deploy",
-        "command-working-directory": "{{ env('APP_PATH_PUBLIC') }}",
+        "command-working-directory": "{{ env('APP_PATH') }}",
         "pass-arguments-to-command": [{
                 "source": "payload",
                 "name": "head_commit.id"
@@ -42,7 +42,7 @@
     {
         "id": "bitbucket",
         "execute-command": "/opt/sitepilot/bin/deploy",
-        "command-working-directory": "{{ env('APP_PATH_PUBLIC') }}",
+        "command-working-directory": "{{ env('APP_PATH') }}",
         "pass-arguments-to-command": [{
             "source": "payload",
             "name": "actor.username"
@@ -57,7 +57,7 @@
     {
         "id": "gitlab",
         "execute-command": "/opt/sitepilot/bin/deploy",
-        "command-working-directory": "{{ env('APP_PATH_PUBLIC') }}",
+        "command-working-directory": "{{ env('APP_PATH') }}",
         "pass-arguments-to-command": [{
             "source": "payload",
             "name": "user_name"

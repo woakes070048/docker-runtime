@@ -8,6 +8,7 @@ deployPath=$1
 releasePath=$APP_PATH/public/{{ $deploy['path'] }}
 releaseDir=${releasePath%/*}
 
+cd $deployPath
 {!! $deploy['hooks']['postCloneScript'] !!}
 
 @foreach($deploy['linkedFolders'] as $folder)
