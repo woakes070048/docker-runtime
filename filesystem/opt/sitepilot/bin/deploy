@@ -7,7 +7,13 @@ set -o pipefail
 mkdir -p $APP_PATH/deploy
 deployPath=$APP_PATH/deploy/$(date +%s)
 
-git clone --single-branch --branch $DEPLOY_BRANCH $DEPLOY_REPOSITORY $deployPath
+if [ ! -z "$DEPLOY_SSH_KEY" ]; then
+    mkdir -p ~/.ssh
+    echo "$DEPLOY_SSH_KEY" > ~/.ssh/id_rsa
+    chmod 600 ~/.ssh/id_rsa
+fi
+
+GIT_SSH_COMMAND="ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no" git clone --single-branch --branch $DEPLOY_BRANCH $DEPLOY_REPOSITORY $deployPath
 
 runtime config:generate /opt/sitepilot/templates /opt/sitepilot/etc --configFile=/opt/sitepilot/runtime.yml --mergeFile=$deployPath/.sitepilot/runtime.yml
 

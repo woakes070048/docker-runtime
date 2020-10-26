@@ -9,6 +9,7 @@ Docker runtime image used for running applications on the Sitepilot managed host
 |`APP_ENV`|`production`|The application environment|
 |`DEPLOY_TOKEN`|`random`|The webhook deploy secret / token|
 |`DEPLOY_BRANCH`|`main`|The branch which needs to be cloned|
+|`DEPLOY_SSH_KEY`|`none`|The repository deploy key, necessary when cloning a repository over SSH|
 |`DEPLOY_REPOSITORY`|`none`|The repository which will be cloned on container startup or incoming webhook|
 
 ## Volumes
