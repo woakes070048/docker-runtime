@@ -40,7 +40,7 @@ RUN add-apt-repository ppa:ondrej/php -y \
 # ----- Composer ----- #
 
 RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" \
-    && php composer-setup.php \
+    && php composer-setup.php --version=1.10.16 \
     && mv composer.phar /usr/local/bin/composer \
     && php -r "unlink('composer-setup.php');" \
     && composer --version
