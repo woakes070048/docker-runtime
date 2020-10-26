@@ -21,12 +21,12 @@ ln -s $APP_PATH/public/{{ $folder }} $deployPath/{{ $folder }}
 @endforeach
 
 if ! openresty -p /var/lib/nginx -c /opt/sitepilot/etc/nginx.conf -t; then
-    echo "Nginx config failed"
+    echo "Nginx config test failed\n"
     exit 1
 fi
 
 if ! php-fpm{{ env('PHP_VERSION', '7.4') }} -y /opt/sitepilot/etc/php-fpm.conf -t; then 
-    echo "PHP config test failed"
+    echo "PHP config test failed\n"
     exit 1
 fi
 
