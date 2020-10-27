@@ -48,9 +48,5 @@ stderr_logfile_maxbytes=0
 [group:web]
 programs=nginx,php-fpm
 
-[eventlistener:processes]
-command=emergency-exit
-events=PROCESS_STATE_STOPPED, PROCESS_STATE_EXITED, PROCESS_STATE_FATAL
-
 [include]
 files=/opt/sitepilot/etc/supervisor.d/*.conf

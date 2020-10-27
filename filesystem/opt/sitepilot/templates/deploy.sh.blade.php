@@ -12,8 +12,6 @@ chmod 600 ~/.ssh/id_rsa
 @endif
 
 @if(!empty($deploy['repository']) && !empty($deploy['path']) && !empty($deploy['branch']))
-mkdir -p $APP_PATH_DEPLOY
-
 DEPLOY_PATH=$APP_PATH_DEPLOY/$(date +%s)
 RELEASE_PATH=$APP_PATH/public/{{ $deploy['path'] }}
 RELEASE_DIR=${RELEASE_PATH%/*}

@@ -4,7 +4,7 @@ Docker runtime image used for running applications on the Sitepilot managed host
 
 ## Volumes
 
-To persist your data you need to mount `/opt/sitepilot/app/public` to a Docker volume or local folder.
+To persist your data you need to mount `/opt/sitepilot/app` to a Docker volume or local folder.
 
 ## Ports
 
@@ -12,9 +12,9 @@ The Nginx webserver is listening to port `8080`.
 
 ## Configuration 
 
-You can override the runtime configuration by creating / mounting a runtime configuration file to `/opt/sitepilot/app/runtime.yml`. The custom runtime configuration wil be merged with the default configuration.
+You can override the runtime configuration by creating / mounting a runtime configuration file to `/opt/sitepilot/config/runtime.yml`. The custom runtime configuration wil be merged with the default configuration.
 
-[You can use the default runtime configuration file for reference.](filesystem/opt/sitepilot/runtime.yml)
+[You can use the default runtime configuration file for reference.](filesystem/opt/sitepilot/runtime/defaults.yml)
 
 ## Auto Deployment
 
