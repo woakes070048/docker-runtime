@@ -7,6 +7,8 @@ ENV PATH="/opt/sitepilot/bin:${PATH}"
 
 ENV APP_PATH=/opt/sitepilot/app
 ENV APP_PATH_PUBLIC=/opt/sitepilot/app/public
+ENV APP_PATH_DEPLOY=/opt/sitepilot/app/deploy
+ENV COMPOSER_HOME=/opt/sitepilot/app/.composer
 
 # ----- Build Files ----- #
 
