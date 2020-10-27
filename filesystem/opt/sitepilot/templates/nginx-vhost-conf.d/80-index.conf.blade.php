@@ -9,10 +9,16 @@ location ^~ /.sitepilot {
     location ~ \.php$ {
         if (!-f $request_filename) { return 404; }
 
-        fastcgi_pass $upstream;
+        if ($http_x_forwarded_proto = 'https') {
+            set $proxy_https 'on';
+        }
+       
+        fastcgi_pass         $upstream;
         fastcgi_read_timeout {{ $nginx['readTimeout'] }};
-        include fastcgi_params;
-        fastcgi_param SCRIPT_FILENAME $request_filename;
+        fastcgi_index        index.php;
+        include              /usr/local/openresty/nginx/conf/fastcgi.conf;
+        fastcgi_param        HTTPS $proxy_https;
+        fastcgi_param        SCRIPT_FILENAME $request_filename;
     }
 }
 
@@ -31,8 +37,13 @@ location ~ \.php$ {
     }
     @endif
 
+    if ($http_x_forwarded_proto = 'https') {
+        set $proxy_https 'on';
+    }
+
     fastcgi_pass         $upstream;
     fastcgi_read_timeout {{ $nginx['readTimeout'] }};
     fastcgi_index        index.php;
     include              /usr/local/openresty/nginx/conf/fastcgi.conf;
+    fastcgi_param        HTTPS $proxy_https;
 }
