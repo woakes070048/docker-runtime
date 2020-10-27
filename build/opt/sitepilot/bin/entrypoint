@@ -4,7 +4,7 @@ set -a
 set -e
 set -o pipefail
 
-runtime config:generate /opt/sitepilot/templates /opt/sitepilot/etc --configFile=/opt/sitepilot/runtime.yml --mergeFile=$APP_PATH/runtime.yml
+runtime config:generate /opt/sitepilot/templates /opt/sitepilot/etc --configFile=/opt/sitepilot/runtime.yml --mergeFile=$APP_PATH/config/runtime.yml
 
 runtime log "Running deploy script"
 chmod +x /opt/sitepilot/etc/deploy.sh && /opt/sitepilot/etc/deploy.sh
