@@ -5,11 +5,8 @@ LABEL maintainer "Sitepilot <support@sitepilot.io>"
 ENV PHP_VERSION=7.4
 ENV PATH="/opt/sitepilot/bin:${PATH}"
 
-ENV APP_ENV="production"
 ENV APP_PATH=/opt/sitepilot/app
 ENV APP_PATH_PUBLIC=/opt/sitepilot/app/public
-
-ENV DEPLOY_BRANCH="main"
 
 # ----- Build Files ----- #
 

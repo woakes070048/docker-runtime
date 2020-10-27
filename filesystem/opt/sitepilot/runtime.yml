@@ -53,6 +53,9 @@ smtp:
   tlsStarttls: "on"
 
 deploy:
+  token: ""
+  repository: ""
+  branch: "main"
   path: "release"
   hooks:
     postCloneScript: |
@@ -60,3 +63,4 @@ deploy:
     postActivateScript: |
       runtime log "Running default post activate script."
   linkedFolders: []
+  key: ""

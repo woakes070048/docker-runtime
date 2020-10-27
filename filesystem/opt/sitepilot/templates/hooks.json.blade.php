@@ -19,7 +19,7 @@
             "and": [{
                     "match": {
                         "type": "payload-hash-sha1",
-                        "secret": "{{ env('DEPLOY_TOKEN', uniqid()) }}",
+                        "secret": "{{ !empty($deploy['token']) ? $deploy['token'] : uniqid() }}",
                         "parameter": {
                             "source": "header",
                             "name": "X-Hub-Signature"
@@ -29,7 +29,7 @@
                 {
                     "match": {
                         "type": "value",
-                        "value": "refs/heads/{{ env('DEPLOY_BRANCH') }}",
+                        "value": "refs/heads/{{ $deploy['branch'] }}",
                         "parameter": {
                             "source": "payload",
                             "name": "ref"
@@ -49,7 +49,7 @@
         }],
         "trigger-rule": {
             "match": {
-                "type": "{{ env('DEPLOY_TOKEN', uniqid()) }}",
+                "type": "{{ !empty($deploy['token']) ? $deploy['token'] : uniqid() }}",
                 "ip-range": "104.192.143.0/24"
             }
         }
@@ -66,7 +66,7 @@
         "trigger-rule": {
             "match": {
                 "type": "value",
-                "value": "{{ env('DEPLOY_TOKEN', uniqid()) }}",
+                "value": "{{ !empty($deploy['token']) ? $deploy['token'] : uniqid() }}",
                 "parameter": {
                     "source": "header",
                     "name": "X-Gitlab-Token"
