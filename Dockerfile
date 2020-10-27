@@ -16,7 +16,7 @@ COPY build /
 
 # ----- Common ----- #
 
-RUN install-packages software-properties-common supervisor curl wget gpg-agent unzip mysql-client git ssh msmtp
+RUN install-packages software-properties-common supervisor curl wget gpg-agent unzip mysql-client git ssh msmtp nano
 
 # ----- OpenResty ----- #
 
