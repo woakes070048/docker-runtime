@@ -2,6 +2,7 @@
 version: "1.0"
 
 environment:
+  APP_ENV: "production"
   DB_HOST: "localhost"
   DB_PORT: 3306
   DB_DATABASE: ""
