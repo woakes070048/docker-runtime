@@ -2,9 +2,18 @@
 
 add_header X-Powered-By "Sitepilot";
 
-location ^~/.sitepilot {
-    deny all;
-    return 403;
+location ^~ /.sitepilot {
+    index index.php;
+    alias  /opt/sitepilot/etc/sitepilot;
+
+    location ~ \.php$ {
+        if (!-f $request_filename) { return 404; }
+
+        fastcgi_pass $upstream;
+        fastcgi_read_timeout {{ $nginx['readTimeout'] }};
+        include fastcgi_params;
+        fastcgi_param SCRIPT_FILENAME $request_filename;
+    }
 }
 
 location / {
