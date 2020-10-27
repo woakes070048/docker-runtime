@@ -15,7 +15,7 @@ nginx:
   errorLogLevel: "warn"
   accessLog: "off"
   realIpFrom:
-    - "10.0.0.0/8"
+    - "10.244.0.0/16"
   realIpHeader: "X-Forwarded-For"
   realIpRecursive: "on"
   blockPHPPaths: false
