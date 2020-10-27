@@ -3,7 +3,7 @@
 try {
     $load = checkLoad();
 
-    @if(!empty($environment['DB_USERNAME']) !empty($environment['DB_PASSWORD']))
+    @if(!empty($environment['DB_USERNAME']) && !empty($environment['DB_PASSWORD']))
     checkMySQL();
     @endif
     
