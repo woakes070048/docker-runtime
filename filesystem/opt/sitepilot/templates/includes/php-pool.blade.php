@@ -30,3 +30,9 @@ php_value[max_execution_time] = {{ $php['requestTimeout'] }}
 php_value[memory_limit] = {{ $php['memoryLimit'] }}M
 php_value[post_max_size] = {{ $php['uploadSize'] }}M
 php_value[upload_max_filesize] = {{ $php['uploadSize'] }}M
+
+@foreach($environment as $key=>$value)
+@if(!empty($value))
+env[{{ $key }}] = '{{ $value }}'
+@endif
+@endforeach

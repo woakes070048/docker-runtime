@@ -1,6 +1,13 @@
 ---
 version: "1.0"
 
+environment:
+  DB_NAME: ""
+  DB_USER: ""
+  DB_PASSWORD: ""
+  DB_HOST: "localhost"
+  DB_PORT: 3306
+
 nginx:
   root: ""
   errorLog: "/dev/stderr"
@@ -28,7 +35,7 @@ nginx:
 php:
   limitExtensions:
     - ".php"
-  clearEnv: "no"
+  clearEnv: "yes"
   accessLog: "off"
   accessLogFormat: '%R - %u %t "%m %r" %s [%n]'
   slowLogTimeout: 0
