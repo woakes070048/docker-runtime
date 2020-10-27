@@ -3,7 +3,7 @@
 try {
     $load = checkLoad();
 
-    @if(!empty($environment['DB_USER']) && !empty($environment['DB_NAME']))
+    @if(!empty($environment['DB_USERNAME']) !empty($environment['DB_PASSWORD']))
     checkMySQL();
     @endif
     
@@ -29,7 +29,7 @@ try {
 function checkMySQL()
 {
     $servername = "{{ $environment['DB_HOST'] }}:{{ $environment['DB_PORT'] }}";
-    $username = "{{ $environment['DB_USER'] }}";
+    $username = "{{ $environment['DB_USERNAME'] }}";
     $password = "{{ $environment['DB_PASSWORD'] }}";
 
     $conn = new mysqli($servername, $username, $password);
