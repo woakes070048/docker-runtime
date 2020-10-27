@@ -23,10 +23,10 @@ cd $DEPLOY_PATH
 {!! $deploy['hooks']['postCloneScript'] !!}
 
 @foreach($deploy['linkedFolders'] as $folder)
-if [ ! -d $APP_PATH/public/{{ $folder }} ]; then 
-    mv $DEPLOY_PATH/{{ $folder }} $APP_PATH/public/{{ $folder }}
-else 
-    rm -rf $DEPLOY_PATH/{{ $folder }}
+if [ ! -d $APP_PATH/public/{{ $folder }} ]; then
+  mv $DEPLOY_PATH/{{ $folder }} $APP_PATH/public/{{ $folder }}
+else
+  rm -r $DEPLOY_PATH/{{ $folder }}
 fi
 
 ln -s $APP_PATH/public/{{ $folder }} $DEPLOY_PATH/{{ $folder }}
@@ -38,3 +38,7 @@ ln -s $DEPLOY_PATH $RELEASE_PATH
 
 {!! $deploy['hooks']['postActivateScript'] !!}
 @endif
+
+runtime log "Cleanup old deployments"
+
+(cd $APP_PATH_DEPLOY && ls -lt | tail -n +4 | awk '{print $9}' | xargs rm -rf)
