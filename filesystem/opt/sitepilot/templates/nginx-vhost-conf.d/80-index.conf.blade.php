@@ -2,8 +2,13 @@
 
 add_header X-Powered-By "Sitepilot";
 
+location ^~/.sitepilot {
+    deny all;
+    return 403;
+}
+
 location / {
-    try_files $uri $uri/ /../root/$uri /index.php$is_args$args;
+    try_files $uri $uri/ /index.php$is_args$args;
 }
 
 location ~ \.php$ {
