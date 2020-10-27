@@ -2,7 +2,7 @@
 version: "1.0"
 
 nginx:
-  root: null
+  root: ""
   errorLog: "/dev/stderr"
   errorLogLevel: "warn"
   accessLog: "off"
@@ -56,7 +56,7 @@ deploy:
   path: "release"
   hooks:
     postCloneScript: |
-      echo "Running default post clone script."
+      runtime log "Running default post clone script."
     postActivateScript: |
-      echo "Running default post activate script."
+      runtime log "Running default post activate script."
   linkedFolders: []
