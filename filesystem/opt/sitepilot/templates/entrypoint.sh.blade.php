@@ -46,7 +46,6 @@ echo "export ZSH_COMPDUMP=$APP_PATH/.cache/.zcompdump" >> $ZSH_RCFILE
 echo 'plugins=(git)' >> $ZSH_RCFILE
 echo 'source $ZSH/oh-my-zsh.sh' >> $ZSH_RCFILE
 
-
 # ----- User Mods ----- #
 
 if [ "$1" != '--skip-usermods' ]; then
