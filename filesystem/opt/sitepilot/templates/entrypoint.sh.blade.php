@@ -23,29 +23,29 @@ if [ ! -f "$SSH_HOST_ED25519_KEY" ]; then runtime log "Generating ed25519 key to
 
 @if(!empty($user['privateKey']))
 runtime log "Saving user private key"
-echo "{{ $user['privateKey'] }}" > /opt/sitepilot/app/.ssh/id_rsa
-chmod 600 /opt/sitepilot/app/.ssh/id_rsa
+echo "{{ $user['privateKey'] }}" > $APP_PATH_SSH/id_rsa
+chmod 600 $APP_PATH_SSH/id_rsa
 @endif
 
 runtime log "Saving user authorized keys"
-@foreach($user['authorizedKeys'] as $key)
-echo "{{ $key }}" >> /opt/sitepilot/app/.ssh/authorized_keys
-chmod 600 /opt/sitepilot/app/.ssh/authorized_keys
-@endforeach
+echo "{{ implode("\n", $user['authorizedKeys']) }}" > $APP_PATH_SSH/authorized_keys
+chmod 600 $APP_PATH_SSH/authorized_keys
 
 # ----- User Mods ----- #
 
-@if(!empty($user['password']))
-runtime log "Updating user password"
-echo "www-data:{{ $user['password'] }}" | sudo -S chpasswd
-@endif
+if [ "$1" != '--skip-usermods' ]; then
+    @if(!empty($user['password']))
+    runtime log "Updating user password"
+    echo "www-data:{{ $user['password'] }}" | sudo -S chpasswd
+    @endif
 
-@if(!empty($user['name']))
-runtime log "Updating user name"
-sudo usermod -l {{ $user['name'] }} www-data
-@else 
-runtime log "Removing sudo privileges"
-sudo sed -i '$ d' /etc/sudoers
-@endif
+    @if(!empty($user['name']))
+    runtime log "Updating user name"
+    sudo usermod -l {{ $user['name'] }} www-data
+    @else 
+    runtime log "Removing sudo privileges"
+    sudo sed -i '$ d' /etc/sudoers
+    @endif
+fi
 
 # ----- End ----- #

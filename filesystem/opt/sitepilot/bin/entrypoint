@@ -4,17 +4,14 @@ set -a
 set -e
 set -o pipefail
 
-RUN_ENTRYPOINT=true
 if [ -f "/opt/sitepilot/etc/supervisor.conf" ]; then
-    RUN_ENTRYPOINT=false 
+    ENTRYPOINT_PARAMS='--skip-usermods' 
 fi
 
 runtime config:generate /opt/sitepilot/templates /opt/sitepilot/etc --configFile=/opt/sitepilot/runtime/defaults.yml --mergeFile=/opt/sitepilot/config/runtime.yml
 
-if [ "$RUN_ENTRYPOINT" = true ]; then
 runtime log "Running entrypoint script"
-chmod +x /opt/sitepilot/etc/entrypoint.sh && /opt/sitepilot/etc/entrypoint.sh
-fi
+chmod +x /opt/sitepilot/etc/entrypoint.sh && /opt/sitepilot/etc/entrypoint.sh $ENTRYPOINT_PARAMS
 
 runtime log "Running deploy script"
 chmod +x /opt/sitepilot/etc/deploy.sh && /opt/sitepilot/etc/deploy.sh
