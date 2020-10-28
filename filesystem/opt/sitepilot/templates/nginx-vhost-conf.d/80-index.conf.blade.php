@@ -17,7 +17,7 @@ location ^~ /.sitepilot {
         fastcgi_read_timeout {{ $nginx['readTimeout'] }};
         fastcgi_index        index.php;
         include              /usr/local/openresty/nginx/conf/fastcgi.conf;
-        fastcgi_param        HTTPS $proxy_https;
+        fastcgi_param        HTTPS $proxy_https if_not_empty;
         fastcgi_param        SCRIPT_FILENAME $request_filename;
     }
 }
@@ -45,5 +45,5 @@ location ~ \.php$ {
     fastcgi_read_timeout {{ $nginx['readTimeout'] }};
     fastcgi_index        index.php;
     include              /usr/local/openresty/nginx/conf/fastcgi.conf;
-    fastcgi_param        HTTPS $proxy_https;
+    fastcgi_param        HTTPS $proxy_https if_not_empty;
 }
