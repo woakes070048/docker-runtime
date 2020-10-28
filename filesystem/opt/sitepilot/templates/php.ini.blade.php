@@ -8,3 +8,13 @@ sendmail_path=/usr/bin/msmtp -C /opt/sitepilot/etc/msmtp.conf --read-envelope-fr
 apc.serializer=igbinary
 
 session.serialize_handler=igbinary
+
+@php
+$disableFunctions = $php['disableFunctions'];
+
+if($php['disablePHPInfo']) {
+    $disableFunctions[] = 'phpinfo';
+}
+@endphp
+
+disable_functions={{ implode(',', $disableFunctions) }}
