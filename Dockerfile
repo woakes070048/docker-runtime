@@ -62,6 +62,13 @@ RUN wget https://github.com/sitepilot/runtime/releases/latest/download/runtime -
 
 RUN install-packages webhook
 
+# ----- NodeJS ----- #
+
+RUN curl -sL https://deb.nodesource.com/setup_12.x | sudo bash - \
+    && install-packages nodejs \
+    && npm -v \
+    && node -v
+
 # ------ User ----- #
 
 RUN echo "www-data ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers \
