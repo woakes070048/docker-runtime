@@ -9,6 +9,7 @@ location ^~ /.sitepilot {
     location ~ \.php$ {
         if (!-f $request_filename) { return 404; }
 
+        set $proxy_https '';
         if ($http_x_forwarded_proto = 'https') {
             set $proxy_https 'on';
         }
@@ -37,6 +38,7 @@ location ~ \.php$ {
     }
     @endif
 
+    set $proxy_https '';
     if ($http_x_forwarded_proto = 'https') {
         set $proxy_https 'on';
     }
