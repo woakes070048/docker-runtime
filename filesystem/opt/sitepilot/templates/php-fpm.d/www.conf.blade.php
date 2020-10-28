@@ -1,8 +1,8 @@
 [www]
 listen = /var/run/php-www.sock
 listen.backlog = 65535
-listen.owner = www-data
-listen.group = www-data
+listen.owner = 33
+listen.group = 33
 
 pm = dynamic
 pm.max_children = {{ $php['maxChildren'] }}
@@ -15,8 +15,8 @@ pm.max_spare_servers = 2
 [www-backup]
 listen = /var/run/php-www-backup.sock
 listen.backlog = 65535
-listen.owner = www-data
-listen.group = www-data
+listen.owner = 33
+listen.group = 33
 
 pm = static
 pm.max_children = 4
@@ -26,8 +26,8 @@ pm.max_requests = 500
 [www-async]
 listen = /var/run/php-www-async.sock
 listen.backlog = 65535
-listen.owner = www-data
-listen.group = www-data
+listen.owner = 33
+listen.group = 33
 
 pm = static
 pm.max_children = 2

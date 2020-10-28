@@ -8,6 +8,7 @@ ENV PATH="/opt/sitepilot/bin:${PATH}"
 ENV APP_PATH=/opt/sitepilot/app
 ENV APP_PATH_PUBLIC=/opt/sitepilot/app/public
 ENV APP_PATH_DEPLOY=/opt/sitepilot/app/deploy
+ENV APP_PATH_SSH=/opt/sitepilot/app/.ssh
 ENV COMPOSER_HOME=/opt/sitepilot/app/.composer
 
 # ----- Build Files ----- #
@@ -16,7 +17,7 @@ COPY build /
 
 # ----- Common ----- #
 
-RUN install-packages software-properties-common supervisor curl wget gpg-agent unzip mysql-client git ssh msmtp nano
+RUN install-packages sudo software-properties-common supervisor curl wget gpg-agent unzip mysql-client git ssh msmtp nano openssh-server
 
 # ----- OpenResty ----- #
 
@@ -61,6 +62,11 @@ RUN wget https://github.com/sitepilot/runtime/releases/latest/download/runtime -
 
 RUN install-packages webhook
 
+# ------ User ----- #
+
+RUN echo "www-data ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers \
+    && usermod -d /opt/sitepilot/app www-data
+
 # ----- Files ----- #
 
 COPY filesystem /
@@ -79,7 +85,7 @@ RUN ln -sf /opt/sitepilot/etc/php.ini /etc/php/${PHP_VERSION}/fpm/conf.d/zz-01-c
 
 EXPOSE 8080
 
-USER www-data:www-data 
+USER 33:33
 
 WORKDIR /opt/sitepilot/app
 

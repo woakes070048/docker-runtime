@@ -1,6 +1,12 @@
 ---
 version: "1.0"
 
+user:
+  name: ""
+  password: ""
+  privateKey: ""
+  authorizedKeys: []
+
 environment:
   APP_ENV: "production"
   DB_HOST: "localhost"

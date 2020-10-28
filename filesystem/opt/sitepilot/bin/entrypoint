@@ -1,0 +1,30 @@
+#!/bin/bash
+
+set -a
+set -e
+set -o pipefail
+
+RUN_ENTRYPOINT=true
+if [ -f "/opt/sitepilot/etc/supervisor.conf" ]; then
+    RUN_ENTRYPOINT=false 
+fi
+
+runtime config:generate /opt/sitepilot/templates /opt/sitepilot/etc --configFile=/opt/sitepilot/runtime/defaults.yml --mergeFile=/opt/sitepilot/config/runtime.yml
+
+if [ "$RUN_ENTRYPOINT" = true ]; then
+runtime log "Running entrypoint script"
+chmod +x /opt/sitepilot/etc/entrypoint.sh && /opt/sitepilot/etc/entrypoint.sh
+fi
+
+runtime log "Running deploy script"
+chmod +x /opt/sitepilot/etc/deploy.sh && /opt/sitepilot/etc/deploy.sh
+
+if [ -f /opt/sitepilot/etc/msmtp.conf ] ; then
+    chmod 0600 /opt/sitepilot/etc/msmtp.conf
+fi
+
+if [ -d /opt/sitepilot/bin/entrypoint.d ] ; then
+    run-parts --exit-on-error /opt/sitepilot/bin/entrypoint.d
+fi
+
+exec "$@"

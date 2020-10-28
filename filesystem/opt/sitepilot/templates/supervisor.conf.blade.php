@@ -36,6 +36,7 @@ stdout_logfile_maxbytes=0
 stderr_logfile = /dev/stderr
 stderr_logfile_maxbytes=0
 
+@if(!empty($deploy['token']))
 [program:webhook]
 command = webhook -urlprefix -/webhooks -hooks /opt/sitepilot/etc/hooks.json -verbose
 utorestart=true
@@ -44,6 +45,19 @@ stdout_logfile = /dev/stdout
 stdout_logfile_maxbytes=0
 stderr_logfile = /dev/stderr
 stderr_logfile_maxbytes=0
+@endif
+
+@if(!empty($user['password']))
+[program:sshd]
+command=/usr/sbin/sshd -D -f /opt/sitepilot/etc/sshd_config -e
+process_name = sshd
+autorestart=true
+stopasgroup=true
+stdout_logfile = /dev/stdout
+stdout_logfile_maxbytes=0
+stderr_logfile = /dev/stderr
+stderr_logfile_maxbytes=0
+@endif 
 
 [group:web]
 programs=nginx,php-fpm
