@@ -47,7 +47,7 @@ stderr_logfile = /dev/stderr
 stderr_logfile_maxbytes=0
 @endif
 
-@if(!empty($user['password']))
+@if(!empty($user['name']))
 [program:sshd]
 command=/usr/sbin/sshd -D -f /opt/sitepilot/etc/sshd_config -e
 process_name = sshd
@@ -57,7 +57,7 @@ stdout_logfile = /dev/stdout
 stdout_logfile_maxbytes=0
 stderr_logfile = /dev/stderr
 stderr_logfile_maxbytes=0
-@endif 
+@endif
 
 [group:web]
 programs=nginx,php-fpm
