@@ -31,6 +31,22 @@ runtime log "Saving user authorized keys"
 echo "{{ implode("\n", $user['authorizedKeys']) }}" > $APP_PATH_SSH/authorized_keys
 chmod 600 $APP_PATH_SSH/authorized_keys
 
+# ----- ZSH ----- #
+
+ZSH_RCFILE=$APP_PATH/.zshrc
+rm -f $ZSH_RCFILE
+
+echo 'compinit -d /temp/.zcompdump' >> $ZSH_RCFILE
+echo 'export ZSH="/opt/sitepilot/ohmyzsh"' > $ZSH_RCFILE
+echo 'export ZSH_THEME="robbyrussell"' >> $ZSH_RCFILE
+echo 'export DISABLE_UPDATE_PROMPT=true' >> $ZSH_RCFILE
+echo 'export DISABLE_AUTO_UPDATE=true' >> $ZSH_RCFILE
+echo "export ZSH_CACHE_DIR=$APP_PATH/.cache" >> $ZSH_RCFILE
+echo "export ZSH_COMPDUMP=$APP_PATH/.cache/.zcompdump" >> $ZSH_RCFILE
+echo 'plugins=(git)' >> $ZSH_RCFILE
+echo 'source $ZSH/oh-my-zsh.sh' >> $ZSH_RCFILE
+
+
 # ----- User Mods ----- #
 
 if [ "$1" != '--skip-usermods' ]; then

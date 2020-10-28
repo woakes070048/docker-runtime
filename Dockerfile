@@ -17,7 +17,7 @@ COPY build /
 
 # ----- Common ----- #
 
-RUN install-packages sudo software-properties-common supervisor curl wget gpg-agent unzip mysql-client git ssh msmtp nano openssh-server
+RUN install-packages sudo software-properties-common supervisor curl wget gpg-agent unzip mysql-client git ssh msmtp nano openssh-server zsh
 
 # ----- OpenResty ----- #
 
@@ -65,7 +65,10 @@ RUN install-packages webhook
 # ------ User ----- #
 
 RUN echo "www-data ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers \
-    && usermod -d /opt/sitepilot/app www-data
+    && usermod -d /opt/sitepilot/app www-data \
+    && chsh -s /bin/zsh www-data \
+    && git clone https://github.com/ohmyzsh/ohmyzsh.git /opt/sitepilot/ohmyzsh \
+    && chmod +x /opt/sitepilot/ohmyzsh/oh-my-zsh.sh
 
 # ----- Files ----- #
 
@@ -77,8 +80,9 @@ RUN mkdir /var/www \
     && chown -R www-data:www-data /run \
     && chown -R www-data:www-data /opt/sitepilot \
     && chown -R www-data:www-data /var/lib/nginx \
-    && chown -R www-data:www-data /var/www
-    
+    && chown -R www-data:www-data /var/www \
+    && rm -f /etc/update-motd.d/*
+
 RUN ln -sf /opt/sitepilot/etc/php.ini /etc/php/${PHP_VERSION}/fpm/conf.d/zz-01-custom.ini
 
 # ----- Config ----- #
