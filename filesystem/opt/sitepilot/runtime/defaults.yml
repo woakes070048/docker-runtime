@@ -2,99 +2,35 @@
 version: "1.0"
 
 user:
-  name: ""
-  password: ""
-  privateKey: ""
+  name: null
+  password: null
+  privateKey: null
   authorizedKeys: []
-
-environment:
-  APP_ENV: "production"
-  DB_HOST: "localhost"
-  DB_PORT: 3306
-  DB_DATABASE: ""
-  DB_USERNAME: ""
-  DB_PASSWORD: ""
 
 nginx:
   root: ""
-  errorLog: "/dev/stderr"
-  errorLogLevel: "warn"
-  accessLog: "off"
-  realIpFrom:
-    - "10.244.0.0/16"
-  realIpHeader: "X-Forwarded-For"
-  realIpRecursive: "on"
-  blockPHPPaths: false
-  readTimeout: 30
-  allowedPHPPaths:
-    - "~^/index.php"
-    - "~^/wp-admin/"
-    - "~^/wp-includes/"
-    - "~^/xmlrpc.php"
-    - "~^/wp-login.php"
-    - "~^/wp-register.php"
-    - "~^/wp-comments-post.php"
-    - "~^/wp-cron.php"
-    - "~^/wp-load.php"
-  vhost:
-    maxBodySize: "32"
+  basicAuth:
+    - name: "Restricted"
+      location: /secret
+      users: |
+        sitepilot:$2a$13$R39DBuhp7V8nAjKJFcBu0.GEtQpuJc.CgK.rTow5.dmE1/0Zlj/FC
 
 php:
-  limitExtensions:
-    - ".php"
-  clearEnv: "yes"
-  accessLog: "off"
-  accessLogFormat: '%R - %u %t "%m %r" %s [%n]'
-  slowLogTimeout: 0
-  requestTimeout: 30
-  memoryLimit: 128
-  uploadSize: 32
-  maxChildren: 5
-  disableFunctions:
-    - pcntl_alarm
-    - pcntl_fork
-    - pcntl_waitpid
-    - pcntl_wait
-    - pcntl_wifexited
-    - pcntl_wifstopped
-    - pcntl_wifsignaled
-    - pcntl_wifcontinued
-    - pcntl_wexitstatus
-    - pcntl_wtermsig
-    - pcntl_wstopsig
-    - pcntl_signal
-    - pcntl_signal_get_handler
-    - pcntl_signal_dispatch
-    - pcntl_get_last_error
-    - pcntl_strerror
-    - pcntl_sigprocmask
-    - pcntl_sigwaitinfo
-    - pcntl_sigtimedwait
-    - pcntl_exec
-    - pcntl_getpriority
-    - pcntl_setpriority
-    - pcntl_async_signals
-    - pcntl_unshare
-  disablePHPInfo: true
-
-cache:
-  enabled: false
-  debug: false
-  backend: "redis"
-  host: "localhost"
-  port: "6379"
+  uploadLimit: "32"
+  memoryLimit: "256"
+  timezone: "Europe/Amsterdam"
 
 smtp:
-  user: ""
-  password: ""
+  user: null
+  password: null
   host: "localhost"
   port: "587"
   tls: "on"
-  tlsStarttls: "on"
+  starttls: "on"
 
 deploy:
-  token: ""
-  repository: ""
+  token: null
+  repository: null
   branch: "main"
   path: "release"
   hooks:
@@ -102,5 +38,4 @@ deploy:
       runtime log "Running default post clone script."
     postActivateScript: |
       runtime log "Running default post activate script."
-  linkedFolders: []
   key: ""
