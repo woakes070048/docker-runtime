@@ -4,7 +4,7 @@ set -a
 set -e
 set -o pipefail
 
-if [ -f "/opt/sitepilot/etc/supervisor.conf" ]; then
+if [ -f "/opt/sitepilot/etc/supervisor/supervisor.conf" ]; then
     ENTRYPOINT_PARAMS='--skip-usermods' 
 fi
 
