@@ -1,6 +1,6 @@
 # Sitepilot Runtime
 
-Docker runtime image used for running applications on the Sitepilot managed hosting platform.
+Docker runtime image used for running web applications on the Sitepilot managed hosting platform.
 
 ## Volumes
 
@@ -8,7 +8,7 @@ To persist your data you need to mount `/opt/sitepilot/app` to a Docker volume o
 
 ## Ports
 
-The Nginx webserver is listening to port `8080`.
+The Openlitespeed webserver is listening to port `8080`.
 
 ## Configuration 
 
@@ -31,4 +31,4 @@ https://<url>/-/webhooks/gitlab
 https://<url>/-/webhooks/bitbucket
 ```
 
-Your code will be cloned after each push (to the configured deploy branch). After a successfull deployment the webserver wil be pointed to the new deployment directory and your updated code is served to your visitors.
+Your code will be cloned after each push (to the configured deploy branch). After a successfull deployment the webserver wil be pointed to the new deployment directory and your updated code is served to your visitors without downtime.

@@ -7,13 +7,12 @@ user:
   privateKey: null
   authorizedKeys: []
 
-nginx:
+server:
   root: ""
-  basicAuth:
-    - name: "Restricted"
-      location: /secret
-      users: |
-        sitepilot:$2a$13$R39DBuhp7V8nAjKJFcBu0.GEtQpuJc.CgK.rTow5.dmE1/0Zlj/FC
+  basicAuth: []
+    #- location: /
+    #  users: |
+    #    sitepilot:$2a$13$R39DBuhp7V8nAjKJFcBu0.GEtQpuJc.CgK.rTow5.dmE1/0Zlj/FC
 
 php:
   uploadLimit: "32"
@@ -28,9 +27,12 @@ smtp:
   tls: "on"
   starttls: "on"
 
+ssh:
+  enabled: false
+
 deploy:
-  token: null
-  repository: null
+  token: ""
+  repository: ""
   branch: "main"
   path: "release"
   hooks:
@@ -38,4 +40,13 @@ deploy:
       runtime log "Running default post clone script."
     postActivateScript: |
       runtime log "Running default post activate script."
-  key: ""
+  privateKey: ""
+  linkedFiles: []
+    #- ".env"
+  linkedFolders: []
+    # - "storage"
+
+supervisor:
+  services: []
+    #- name: "horizon"
+    #  command: "/usr/local/bin/php /opt/sitepilot/app/public/release/artisan queue:work"

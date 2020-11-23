@@ -13,9 +13,13 @@ sudo chown -R www-data:www-data /opt/sitepilot/app
 
 mkdir -p $COMPOSER_HOME
 mkdir -p $APP_PATH_PUBLIC
-mkdir -p $APP_PATH_DEPLOY
 mkdir -p $APP_PATH_AUTH
 mkdir -p $APP_PATH_LOGS
+mkdir -p $APP_PATH_DEPLOY
+mkdir -p $APP_PATH_DEPLOY_DATA
+
+chmod +x /opt/sitepilot/etc/deploy.sh
+chmod 600 /opt/sitepilot/etc/msmtp/msmtp.conf
 
 # ----- SSH-Keys ----- #
 
@@ -41,25 +45,10 @@ chmod 600 $APP_PATH_AUTH/id_rsa
 
 # ----- Basic Auth ----- #
 
-@foreach($nginx['basicAuth'] as $key=>$auth) 
+@foreach($server['basicAuth'] as $key=>$auth) 
 runtime log "Setup htpasswd file for path '{{ $auth['location'] }}'"
 echo '{{ $auth['users'] }}' > $APP_PATH_AUTH/{{ $key }}-htpasswd
 @endforeach
-
-# ----- ZSH ----- #
-
-ZSH_RCFILE=$APP_PATH/.zshrc
-rm -f $ZSH_RCFILE
-
-echo 'compinit -d /temp/.zcompdump' >> $ZSH_RCFILE
-echo 'export ZSH="/opt/sitepilot/ohmyzsh"' > $ZSH_RCFILE
-echo 'export ZSH_THEME="robbyrussell"' >> $ZSH_RCFILE
-echo 'export DISABLE_UPDATE_PROMPT=true' >> $ZSH_RCFILE
-echo 'export DISABLE_AUTO_UPDATE=true' >> $ZSH_RCFILE
-echo "export ZSH_CACHE_DIR=$APP_PATH/.cache" >> $ZSH_RCFILE
-echo "export ZSH_COMPDUMP=$APP_PATH/.cache/.zcompdump" >> $ZSH_RCFILE
-echo 'plugins=(git)' >> $ZSH_RCFILE
-echo 'source $ZSH/oh-my-zsh.sh' >> $ZSH_RCFILE
 
 # ----- User Mods ----- #
 
@@ -71,7 +60,7 @@ echo 'www-data:{{ $user['password'] }}' | sudo -S chpasswd -e
 
 @if($user['name'])
 runtime log "Updating user name"
-sudo usermod -l {{ $user['name'] }} -s /bin/zsh www-data
+sudo usermod -l {{ $user['name'] }} -s /bin/bash www-data
 @else
 runtime log "Removing sudo privileges"
 sudo sed -i '$ d' /etc/sudoers
