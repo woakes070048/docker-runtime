@@ -8,7 +8,7 @@ To persist your data you need to mount `/opt/sitepilot/app` to a Docker volume o
 
 ## Ports
 
-The Openlitespeed webserver is listening to port `8080`.
+The Openlitespeed webserver is listening to port `8080` (http) and `8443` (https).
 
 ## Configuration 
 
