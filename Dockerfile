@@ -18,7 +18,7 @@ COPY build /
 
 # ----- Packages ----- #
 
-RUN install-packages sudo software-properties-common supervisor curl wget gpg-agent unzip mysql-client git ssh msmtp nano openssh-server restic
+RUN install-packages sudo software-properties-common supervisor curl wget gpg-agent unzip mysql-client git ssh msmtp nano openssh-server restic rsync
 
 # ----- Openlitespeed & PHP ----- #
 
@@ -42,6 +42,12 @@ RUN ln -sf /usr/local/lsws/lsphp$PHP_VERSION/bin/php /usr/local/bin/php \
     && ln -sf /opt/sitepilot/etc/litespeed/httpd_config.conf /usr/local/lsws/conf/httpd_config.conf \
     && ln -sf /opt/sitepilot/etc/php/php.ini /usr/local/lsws/lsphp74/etc/php/7.4/mods-available/99-sitepilot.ini
 
+# ----- Runtime ----- #
+
+RUN wget https://github.com/sitepilot/runtime/releases/latest/download/runtime -O /opt/sitepilot/bin/runtime \
+    && chmod +x /opt/sitepilot/bin/runtime \
+    && runtime --version
+
 # ----- Composer ----- #
 
 RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" \
@@ -50,23 +56,6 @@ RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" \
     && php -r "unlink('composer-setup.php');" \
     && composer --version
 
-# ----- WPCLI ----- #
-
-RUN curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar \
-    && chmod +x wp-cli.phar \
-    && mv wp-cli.phar /usr/local/bin/wp \
-    && wp --allow-root --version
-
-# ----- Runtime ----- #
-
-RUN wget https://github.com/sitepilot/runtime/releases/latest/download/runtime -O /opt/sitepilot/bin/runtime \
-    && chmod +x /opt/sitepilot/bin/runtime \
-    && runtime --version
-
-# ----- Webhook ----- #
-
-RUN install-packages webhook
-
 # ----- NodeJS ----- #
 
 RUN curl -sL https://deb.nodesource.com/setup_12.x | sudo bash - \
@@ -74,6 +63,23 @@ RUN curl -sL https://deb.nodesource.com/setup_12.x | sudo bash - \
     && npm -v \
     && node -v \
     && npm install -g yarn
+
+# ----- WPCLI ----- #
+
+RUN curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar \
+    && chmod +x wp-cli.phar \
+    && mv wp-cli.phar /usr/local/bin/wp \
+    && wp --allow-root --version
+
+# ----- Wordmove ----- #
+
+RUN install-packages ruby \
+    && gem install --no-user-install wordmove \
+    && wordmove --version
+
+# ----- Webhook ----- #
+
+RUN install-packages webhook
 
 # ------ User ----- #
 
