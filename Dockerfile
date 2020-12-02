@@ -1,49 +1,52 @@
 FROM ubuntu:20.04
 LABEL maintainer "Sitepilot <support@sitepilot.io>"
 
-# ----- Environment ----- #
-
-ENV PORT=8080
-ENV PHP_VERSION=7.4
-ENV DOCKERIZE_VERSION=2.1.0
+ENV PHP_VERSION=74
 ENV PATH="/opt/sitepilot/bin:${PATH}"
 
-ENV APP_ROOT=/opt/sitepilot/app
-ENV DOCUMENT_ROOT=/opt/sitepilot/app/public
-ENV SITEPILOT_ROOT=/opt/sitepilot/app/.sitepilot
-ENV DEPLOY_TOKEN="jrCgCa9AFzqNMlvMWkGQ5ozOdrqdjt0I"
+ENV APP_PATH=/opt/sitepilot/app
+ENV APP_PATH_PUBLIC=/opt/sitepilot/app/public
+ENV APP_PATH_LOGS=/opt/sitepilot/app/logs
+ENV APP_PATH_AUTH=/opt/sitepilot/app/.auth
+ENV COMPOSER_HOME=/opt/sitepilot/app/.composer
+ENV APP_PATH_DEPLOY=/opt/sitepilot/app/deploy
+ENV APP_PATH_DEPLOY_DATA=/opt/sitepilot/app/deploy/.data
 
 # ----- Build Files ----- #
 
 COPY build /
 
-# ----- Common ----- #
+# ----- Packages ----- #
 
-RUN install-packages software-properties-common supervisor curl wget gpg-agent unzip mysql-client git
+RUN install-packages sudo software-properties-common supervisor curl wget gpg-agent unzip mysql-client git ssh msmtp nano openssh-server restic rsync
 
-# ----- Dockerize ----- #
+# ----- Openlitespeed & PHP ----- #
 
-RUN wget https://github.com/presslabs/dockerize/releases/download/v$DOCKERIZE_VERSION/dockerize-linux-amd64-v$DOCKERIZE_VERSION.tar.gz \
-    && tar -C /usr/local/bin -xzvf dockerize-linux-amd64-v$DOCKERIZE_VERSION.tar.gz \
-    && rm dockerize-linux-amd64-v$DOCKERIZE_VERSION.tar.gz
+RUN wget -O - http://rpms.litespeedtech.com/debian/enable_lst_debian_repo.sh | bash
 
-# ----- OpenResty ----- #
+RUN install-packages \
+    lsphp$PHP_VERSION \
+    lsphp$PHP_VERSION-mysql \
+    lsphp$PHP_VERSION-imap \
+    lsphp$PHP_VERSION-curl \
+    lsphp$PHP_VERSION-common \
+    lsphp$PHP_VERSION-json \
+    lsphp$PHP_VERSION-redis \
+    lsphp$PHP_VERSION-opcache \
+    lsphp$PHP_VERSION-igbinary \
+    lsphp$PHP_VERSION-imagick \
+    lsphp$PHP_VERSION-intl \
+    openlitespeed
 
-RUN wget -qO - https://openresty.org/package/pubkey.gpg | apt-key add - \
-    && add-apt-repository -y "deb http://openresty.org/package/ubuntu $(lsb_release -sc) main" \
-    && install-packages openresty \
-    && openresty -v
+RUN ln -sf /usr/local/lsws/lsphp$PHP_VERSION/bin/php /usr/local/bin/php \
+    && ln -sf /opt/sitepilot/etc/litespeed/httpd_config.conf /usr/local/lsws/conf/httpd_config.conf \
+    && ln -sf /opt/sitepilot/etc/php/php.ini /usr/local/lsws/lsphp74/etc/php/7.4/mods-available/99-sitepilot.ini
 
-# ----- PHP ----- #
+# ----- Runtime ----- #
 
-RUN add-apt-repository ppa:ondrej/php -y \
-    && install-packages php${PHP_VERSION}-fpm php${PHP_VERSION}-common php${PHP_VERSION}-mysql \
-    php${PHP_VERSION}-xml php${PHP_VERSION}-xmlrpc php${PHP_VERSION}-curl php${PHP_VERSION}-gd \
-    php${PHP_VERSION}-imagick php${PHP_VERSION}-cli php${PHP_VERSION}-dev php${PHP_VERSION}-imap \
-    php${PHP_VERSION}-mbstring php${PHP_VERSION}-opcache php${PHP_VERSION}-redis \
-    php${PHP_VERSION}-soap php${PHP_VERSION}-zip \
-    && mkdir -p /run/php \
-    && php-fpm${PHP_VERSION} -v
+RUN wget https://github.com/sitepilot/runtime/releases/latest/download/runtime -O /opt/sitepilot/bin/runtime \
+    && chmod +x /opt/sitepilot/bin/runtime \
+    && runtime --version
 
 # ----- Composer ----- #
 
@@ -53,31 +56,59 @@ RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" \
     && php -r "unlink('composer-setup.php');" \
     && composer --version
 
+# ----- NodeJS ----- #
+
+RUN curl -sL https://deb.nodesource.com/setup_12.x | sudo bash - \
+    && install-packages nodejs \
+    && npm -v \
+    && node -v \
+    && npm install -g yarn
+
+# ----- WPCLI ----- #
+
+RUN curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar \
+    && chmod +x wp-cli.phar \
+    && mv wp-cli.phar /usr/local/bin/wp \
+    && wp --allow-root --version
+
+# ----- Wordmove ----- #
+
+RUN install-packages ruby \
+    && gem install --no-user-install wordmove \
+    && wordmove --version
+
 # ----- Webhook ----- #
 
 RUN install-packages webhook
 
+# ------ User ----- #
+
+RUN echo "www-data ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers \
+    && usermod -u 10000 -d /opt/sitepilot/app www-data \
+    && groupmod -g 10000 www-data \
+    && chsh -s /bin/bash www-data
+    
 # ----- Files ----- #
 
 COPY filesystem /
 
-RUN mkdir /var/www \
-    && mkdir /opt/sitepilot/app \
-    && mkdir -p /var/lib/nginx/logs \
+RUN mkdir -p /var/run \
+    && mkdir -p /opt/sitepilot/etc \
     && chown -R www-data:www-data /run \
     && chown -R www-data:www-data /opt/sitepilot \
-    && chown -R www-data:www-data /var/lib/nginx \
-    && chown -R www-data:www-data /var/www
-    
-RUN ln -sf /opt/sitepilot/etc/php.ini /etc/php/${PHP_VERSION}/fpm/conf.d/zz-01-custom.ini \
-    && ln -sf ${SITEPILOT_ROOT}}/config/php/php.ini /etc/php/${PHP_VERSION}/fpm/conf.d/zz-90-app.ini
+    && chown -R www-data:www-data /usr/local/lsws \
+    && ln -sf /dev/stderr /usr/local/lsws/logs/error.log \
+    && ln -sf /dev/stderr /usr/local/lsws/logs/stderr.log
 
 # ----- Config ----- #
 
-USER www-data:www-data 
+EXPOSE 8080
+EXPOSE 8443
+
+USER 10000:10000
 
 WORKDIR /opt/sitepilot/app
 
 ENTRYPOINT ["/opt/sitepilot/bin/entrypoint"]
 
-CMD ["supervisord", "-c", "/opt/sitepilot/etc/supervisor.conf"]
+CMD ["supervisord", "-c", "/opt/sitepilot/etc/supervisor/supervisor.conf"]

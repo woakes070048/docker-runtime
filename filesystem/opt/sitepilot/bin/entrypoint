@@ -1,0 +1,27 @@
+#!/bin/bash
+
+set -a
+set -e
+set -o pipefail
+
+if [ -f "/opt/sitepilot/etc/supervisor/supervisor.conf" ]; then
+    ENTRYPOINT_PARAMS='--skip-usermods' 
+fi
+
+runtime config:generate /opt/sitepilot/templates /opt/sitepilot/etc --configFile=/opt/sitepilot/runtime/defaults.yml --mergeFile=/opt/sitepilot/config/runtime.yml
+
+runtime log "Running entrypoint script"
+chmod +x /opt/sitepilot/etc/entrypoint.sh && /opt/sitepilot/etc/entrypoint.sh $ENTRYPOINT_PARAMS
+
+#runtime log "Running deploy script"
+#chmod +x /opt/sitepilot/etc/deploy.sh && /opt/sitepilot/etc/deploy.sh --skip-supervisor-reload
+
+if [ -f /opt/sitepilot/etc/msmtp.conf ] ; then
+    chmod 0600 /opt/sitepilot/etc/msmtp.conf
+fi
+
+if [ -d /opt/sitepilot/bin/entrypoint.d ] ; then
+    run-parts --exit-on-error /opt/sitepilot/bin/entrypoint.d
+fi
+
+exec "$@"

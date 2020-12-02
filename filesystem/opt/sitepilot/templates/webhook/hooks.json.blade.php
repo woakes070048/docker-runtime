@@ -1,7 +1,7 @@
 [{
-        "id": "github-webhook",
-        "execute-command": "/opt/sitepilot/bin/deploy",
-        "command-working-directory": "{{ .Env.APP_ROOT }}",
+        "id": "github",
+        "execute-command": "/opt/sitepilot/etc/deploy.sh",
+        "command-working-directory": "{{ env('APP_PATH') }}",
         "pass-arguments-to-command": [{
                 "source": "payload",
                 "name": "head_commit.id"
@@ -19,7 +19,7 @@
             "and": [{
                     "match": {
                         "type": "payload-hash-sha1",
-                        "secret": "{{ .Env.DEPLOY_TOKEN }}",
+                        "secret": "{{ !empty($deploy['token']) ? $deploy['token'] : uniqid() }}",
                         "parameter": {
                             "source": "header",
                             "name": "X-Hub-Signature"
@@ -29,7 +29,7 @@
                 {
                     "match": {
                         "type": "value",
-                        "value": "refs/heads/master",
+                        "value": "refs/heads/{{ $deploy['branch'] }}",
                         "parameter": {
                             "source": "payload",
                             "name": "ref"
@@ -40,24 +40,24 @@
         }
     },
     {
-        "id": "bitbucket-webhook",
-        "execute-command": "/opt/sitepilot/bin/deploy",
-        "command-working-directory": "{{ .Env.APP_ROOT }}",
+        "id": "bitbucket",
+        "execute-command": "/opt/sitepilot/etc/deploy.sh",
+        "command-working-directory": "{{ env('APP_PATH') }}",
         "pass-arguments-to-command": [{
             "source": "payload",
             "name": "actor.username"
         }],
         "trigger-rule": {
             "match": {
-                "type": "{{ .Env.DEPLOY_TOKEN }}",
+                "type": "{{ !empty($deploy['token']) ? $deploy['token'] : uniqid() }}",
                 "ip-range": "104.192.143.0/24"
             }
         }
     },
     {
-        "id": "gitlab-webhook",
-        "execute-command": "/opt/sitepilot/bin/deploy",
-        "command-working-directory": "{{ .Env.APP_ROOT }}",
+        "id": "gitlab",
+        "execute-command": "/opt/sitepilot/etc/deploy.sh",
+        "command-working-directory": "{{ env('APP_PATH') }}",
         "pass-arguments-to-command": [{
             "source": "payload",
             "name": "user_name"
@@ -66,7 +66,7 @@
         "trigger-rule": {
             "match": {
                 "type": "value",
-                "value": "{{ .Env.DEPLOY_TOKEN }}",
+                "value": "{{ !empty($deploy['token']) ? $deploy['token'] : uniqid() }}",
                 "parameter": {
                     "source": "header",
                     "name": "X-Gitlab-Token"

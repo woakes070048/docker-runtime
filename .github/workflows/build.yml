@@ -11,6 +11,6 @@ jobs:
       - name: Build and deploy Docker image
         run: |
           if [[ ${GITHUB_REF##*/} = "master" ]]; then export DOCKER_TAG=latest; else export DOCKER_TAG=${GITHUB_REF##*/}; fi
-          echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
-          docker build . --file Dockerfile --tag sitepilot/runtime:$DOCKER_TAG
-          docker push sitepilot/runtime:$DOCKER_TAG
+          echo ${{ secrets.CR_DEPLOY_TOKEN }} | docker login ghcr.io -u ${{ secrets.CR_DEPLOY_USER }} --password-stdin
+          docker build . --tag ghcr.io/sitepilot/runtime:$DOCKER_TAG
+          docker push ghcr.io/sitepilot/runtime:$DOCKER_TAG
