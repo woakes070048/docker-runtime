@@ -18,6 +18,7 @@ php:
   uploadLimit: "32"
   memoryLimit: "256"
   timezone: "Europe/Amsterdam"
+  maxExecutionTime: 300
 
 smtp:
   user: null
